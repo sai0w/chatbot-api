@@ -44,10 +44,12 @@ public class ApiTest {
 
       String paramJson = "{\n" +
               "  \"req_data\": {\n" +
-              "    \"text\": \"请你去百度！\\n\",\n" +
-              "    \"image_ids\": []\n" +
+              "    \"text\": \"自己去百度！\\n\",\n" +
+              "    \"image_ids\": [],\n" +
+              "    \"silenced\": false\n" +
               "  }\n" +
               "}";
+
 
       StringEntity stringEntity = new StringEntity(paramJson, ContentType.create("text/json","UTF-8"));
       post.setEntity(stringEntity);
@@ -56,6 +58,39 @@ public class ApiTest {
          String res = EntityUtils.toString(response.getEntity());
          System.out.println(res);
       }else{
+         System.out.println(response.getStatusLine().getStatusCode());
+      }
+
+   }
+
+   @Test
+   public void test_chatGPT() throws IOException {
+      CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+      HttpPost post = new HttpPost("https://api.chatanywhere.tech/v1/chat/completions");
+      post.addHeader("Content-Type", "application/json");
+      post.addHeader("Authorization", "Bearer sk-IShIJGm3xl9t04F8EcjOM5I8IQFDlC9BbRvmp6tOIK5nuOTD");
+
+      String paramJson = "{\n" +
+              "    \"model\": \"gpt-3.5-turbo\",\n" +
+              "    \"messages\": [\n" +
+              "      {\n" +
+              "        \"role\": \"system\",\n" +
+              "        \"content\": \"hello.\"\n" +
+              "      },\n" +
+              "      {\n" +
+              "        \"role\": \"user\",\n" +
+              "        \"content\": \"写一个java快排!\"\n" +
+              "      }\n" +
+              "    ]\n" +
+              "  }";
+      StringEntity stringEntity = new StringEntity(paramJson, ContentType.create("text/json", "UTF-8"));
+      post.setEntity(stringEntity);
+      CloseableHttpResponse response = httpClient.execute(post);
+      if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+         String res = EntityUtils.toString(response.getEntity());
+         System.out.println(res);
+      } else {
          System.out.println(response.getStatusLine().getStatusCode());
       }
 
